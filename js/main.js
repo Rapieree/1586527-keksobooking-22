@@ -2,7 +2,7 @@
 'use strict';
 
 // decimalSign - Символов после запятой, 0 для целых чисел
-function getRandomNumb(min, max, decimalSign = 0) {
+const getRandomNumb = (min, max, decimalSign = 0) => {
   if((min < 0 || max < 0 || decimalSign < 0 || !Number.isInteger(decimalSign)) || Math.abs(min - max) === 0) {
     return ;
   } // Проверка на положительные значения и диапазон больше 0
@@ -20,20 +20,14 @@ function getRandomNumb(min, max, decimalSign = 0) {
 }
 
 // Проверка вероятности
-
-let minimum = 1;
-let maximum = 3;
+let minimum = 0;
+let maximum = 10;
 let decimal = 0;
 let arrCount = new Map();
 
 for(let i = 0; i < 100000; i++) {
   let temp = getRandomNumb(minimum, maximum, decimal);
-  if(arrCount.has(temp)) {
-    arrCount.set(temp, arrCount.get(temp) + 1);
-  }
-  else {
-    arrCount.set(temp, 1);
-  }
+  arrCount.has(temp) ? arrCount.set(temp, arrCount.get(temp) + 1) : arrCount.set(temp, 1);
 }
 
 arrCount.forEach((value, key) => console.log('Число = ' + key +', Совпадений = ' + value));
