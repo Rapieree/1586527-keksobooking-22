@@ -3,7 +3,7 @@ const getMockData = () => {
     typesOfDwelling: ['palace', 'flat', 'house', 'bungalow'],
     checkTimes: ['12:00', '13:00', '14:00'],
     featuresList: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'],
-    tempTitle: 'Милая, уютная халупа на окраине Питера',
+    tempTitle: 'Уютная халупа на окраине Мира.',
     latitudeMin: 35.65,
     latitudeMax: 35.7,
     longitudeMin: 139.7,

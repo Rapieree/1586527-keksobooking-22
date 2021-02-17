@@ -1,4 +1,2 @@
-import { getAdvertsArray } from './data.js';
+import './cards.js';
 
-// eslint-disable-next-line no-console
-console.log(getAdvertsArray());

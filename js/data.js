@@ -24,7 +24,7 @@ const getPhotos = (photosArr, maxPhotos) => {
 
 const getLocation = () => {
   return {
-    x: getRandomNumb(tempData.latitudeMin, tempData.latitudeMin, 5),
+    x: getRandomNumb(tempData.latitudeMin, tempData.latitudeMax, 5),
     y: getRandomNumb(tempData.longitudeMin, tempData.longitudeMax, 5),
   }
 }
@@ -32,7 +32,7 @@ const getLocation = () => {
 const getOffer = (AddressCoord) => {
   return {
     title: tempData.tempTitle,
-    adress: Object.values(AddressCoord).join(', '),
+    address: Object.values(AddressCoord).join(', '),
     price: getRandomNumb(0, 100000),
     type: tempData.typesOfDwelling[getRandomNumb(0, tempData.typesOfDwelling.length-1)],
     rooms: getRandomNumb(0, 10),
@@ -41,7 +41,7 @@ const getOffer = (AddressCoord) => {
     checkout: tempData.checkTimes[getRandomNumb(0, tempData.checkTimes.length-1)],
     features: getFeatures(tempData.featuresList),
     description: tempData.tempDescription,
-    photos: getPhotos(tempData.featuresList, 10),
+    photos: getPhotos(tempData.photosList, 10),
   }
 }
 
@@ -54,6 +54,6 @@ const getAdvert = () => {
   }
 }
 
-const getAdvertsArray = () => new Array(10).fill(null).map(() => getAdvert());
+const getAdvertsDataArray = () => new Array(10).fill(null).map(() => getAdvert());
 
-export { getAdvertsArray };
+export { getAdvertsDataArray };
