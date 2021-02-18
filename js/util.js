@@ -20,17 +20,17 @@ export { getRandomNumb };
 const setNodeProperty = (mainNode, selectorName, property, value) => { // Изменить свойство узла, если пустое - скрыть
   let cardNode = mainNode.querySelector(selectorName);
   property === 'text' ? cardNode.textContent = value : cardNode.setAttribute(property, value);
-  (value === '' || value === null) ? cardNode.setAttribute('hidden', '') : '';
+  (value === '' || value === null) ? cardNode.classList.add('hidden') : '';
   return mainNode;
 }
 export { setNodeProperty };
 
 const getNameTypeHousing = (typeHousing) => { // Получить тип жилья, на русском
   switch (typeHousing) {
-    case 'flat':
-      return 'Квартира';
     case 'bungalow':
       return 'Бунгало';
+    case 'flat':
+      return 'Квартира';
     case 'house':
       return 'Дом';
     case 'palace':
@@ -80,10 +80,10 @@ const getNodeFeatures = (templateNode, featuresData) => { // Блок особе
   let templateFeatures = templateNode.querySelector('.popup__features').cloneNode(true);
   for (let templateFeature of templateFeatures.childNodes) {
     if (templateFeature.nodeName !== '#text') {
-      templateFeature.style.display = 'none';
+      templateFeature.classList.add('hidden');
       for (let i = 0; i < featuresData.length; i++) {
         if (templateFeature.classList.contains('popup__feature--' + featuresData[i])) {
-          templateFeature.style.display = '';
+          templateFeature.classList.remove('hidden');
         }
       }
     }

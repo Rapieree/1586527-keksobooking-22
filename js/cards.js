@@ -22,7 +22,7 @@ const createAdvertsFragment = (template, advertsData) => {
     setNodeProperty(card, '.popup__text--time', 'text', getTextTime(advertData.offer.checkin, advertData.offer.checkout)); // Время заезда\выезда
     card.querySelector('.popup__features').replaceWith(getNodeFeatures(card, advertData.offer.features)); // Блок особенностей
     card.querySelector('.popup__photos').replaceWith(getNodePhotos(card, advertData.offer.photos)); // Блок фотографий
-    card.querySelector('.popup__avatar').setAttribute('src', advertData.author.avatar); // Аватарка
+    setNodeProperty(card, '.popup__avatar', 'src', advertData.author.avatar); // Аватарка
 
     advertsListFragment.appendChild(card);
   }
