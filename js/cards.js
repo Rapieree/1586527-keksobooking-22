@@ -1,10 +1,12 @@
 import { getAdvertsDataArray } from './data.js';
-import { setNodeProperty } from './util.js';
-import { getNameTypeHousing } from './util.js';
-import { getTextTime } from './util.js';
-import { getTextCapacity } from './util.js';
-import { getNodeFeatures } from './util.js';
-import { getNodePhotos } from './util.js';
+import {
+  setNodeProperty,
+  getNameTypeHousing,
+  getTextTime,
+  getTextCapacity,
+  getNodeFeatures,
+  getNodePhotos
+} from './util.js';
 
 const advertsDataArray = getAdvertsDataArray();
 const cardTemplate = document.querySelector('#card').content.querySelector('.popup'); // шаблон карточки объявления
@@ -30,5 +32,10 @@ const createAdvertsFragment = (template, advertsData) => {
 
 createAdvertsFragment(cardTemplate, advertsDataArray);
 
-document.querySelector('.map__canvas').appendChild(advertsListFragment.querySelector('.popup'));
+const getAdvertsCardsArray = () => {
+  return advertsListFragment;
+}
+export { getAdvertsCardsArray };
+
+//document.querySelector('.map__canvas').appendChild(advertsListFragment.querySelector('.popup'));
 
