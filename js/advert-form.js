@@ -31,6 +31,5 @@ const syncCheckTime = () => {
 }
 
 typeOfHouseCombobox.addEventListener('change', setMinPrice);
-
 timeInCombobox.addEventListener('input', syncCheckTime());
 timeOutCombobox.addEventListener('input', syncCheckTime());

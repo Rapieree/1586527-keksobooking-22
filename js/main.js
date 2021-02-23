@@ -1,2 +1,6 @@
 import './cards.js';
-import './form.js';
+import './map.js';
+import './advert-form.js';
+import './filter-form.js';
+
+
