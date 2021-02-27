@@ -1,5 +1,5 @@
 import { setStatusFilterForm } from './filter-form.js';
-import { setAddressValue, setStatusAdvertForm } from './advert-form.js';
+import { setAddressValue, initializingAdvertForm } from './advert-form.js';
 import { getAdvertsDataArray } from './data.js';
 import { getAdvertsCardsArray } from './cards.js';
 
@@ -19,9 +19,9 @@ let adressCoord = {
 /* global L:readonly */
 const map = L.map('map-canvas')
   .on('load', () => {
-    setStatusAdvertForm(true);
-    setStatusFilterForm(true);
+    initializingAdvertForm();
     setAddressValue(adressCoord);
+    setStatusFilterForm(true);
   })
   .setView({
     lat: COORD_TOKYO.x,
