@@ -1,10 +1,11 @@
 import { openErrorServerPopup } from './util.js';
 import { openErrorSendPopup, openSuccessSendPopup } from './util.js';
-import { setStatusFilterForm } from './filter-form.js';
+import { setStatusFilterForm, resetFilterForm } from './filter-form.js';
 import { resetAdvertForm } from './advert-form.js';
+import { resetMap } from './map.js';
 
 
-const GET_DATA_ADRESS = 'https://22.javascript.pages.academy/keksobooking/data';
+const GET_DATA_ADRESS = 'https://22.javascript.pages.academy/keksobooking/datas';
 const SEND_DATA_ADRESS = 'https://22.javascript.pages.academy/keksobooking';
 
 //Обработчик ошибки при получении данных
@@ -39,6 +40,8 @@ export { getAdvertsDataOfServer };
 const successSendHandler = () => {
   openSuccessSendPopup(true);
   resetAdvertForm();
+  resetMap();
+  resetFilterForm();
 }
 export { successSendHandler };
 

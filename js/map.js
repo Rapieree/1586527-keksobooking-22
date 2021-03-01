@@ -1,5 +1,5 @@
 import { setStatusFilterForm } from './filter-form.js';
-import { setAddressValue, setStatusAdvertForm } from './advert-form.js';
+import { setAddressValue, initializingAdvertForm } from './advert-form.js';
 import { getAdvertsCardsArray } from './cards.js';
 import { getAdvertsDataOfServer, errorServerHandler } from './server.js';
 
@@ -16,9 +16,9 @@ let adressCoord = {
 /* global L:readonly */
 const map = L.map('map-canvas')
   .on('load', () => {
-    setStatusAdvertForm(true);
-    setStatusFilterForm(true);
+    initializingAdvertForm();
     setAddressValue(adressCoord);
+    setStatusFilterForm(true);
   })
   .setView({
     lat: COORD_TOKYO.x,
@@ -63,6 +63,12 @@ mainPinMarker.on('move', (evt) => {
 
 mainPinMarker.addTo(map);
 
+const setMainMarker = (coord) => {
+  mainPinMarker.setLatLng( {
+    lat: coord.x,
+    lng: coord.y,
+  });
+}
 
 const setExtraMarkers = (dataArray) => {
   const cardsArray = getAdvertsCardsArray(dataArray);
@@ -82,8 +88,10 @@ const setExtraMarkers = (dataArray) => {
 };
 
 const resetMap = () => {
-
+  setMainMarker(COORD_TOKYO);
+  getAdvertsDataOfServer(setExtraMarkers, errorServerHandler);
 }
+export { resetMap };
 
 getAdvertsDataOfServer(setExtraMarkers, errorServerHandler);
 
