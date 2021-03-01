@@ -19,3 +19,9 @@ const setStatusFilterForm = (flag) => {
 }
 export { setStatusFilterForm };
 setStatusFilterForm(false);
+
+// Вернуть фильтр в исходное состояние
+const resetFilterForm = () => {
+  filterForm.reset();
+}
+export { resetFilterForm };

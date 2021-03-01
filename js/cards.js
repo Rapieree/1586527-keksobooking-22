@@ -1,4 +1,3 @@
-import { getAdvertsDataArray } from './data.js';
 import {
   setNodeProperty,
   getNameTypeHousing,
@@ -8,13 +7,12 @@ import {
   getNodePhotos
 } from './util.js';
 
-const advertsDataArray = getAdvertsDataArray();
 const cardTemplate = document.querySelector('#card').content.querySelector('.popup'); // шаблон карточки объявления
 const advertsListFragment = document.createDocumentFragment();
 
-const createAdvertsFragment = (template, advertsData) => {
+const getAdvertsCardsArray = (advertsData) => {
   for (let advertData of advertsData) {
-    const card = template.cloneNode(true);
+    const card = cardTemplate.cloneNode(true);
 
     setNodeProperty(card, '.popup__title', 'text', advertData.offer.title); // Название
     setNodeProperty(card, '.popup__text--address', 'text', advertData.offer.address); // Адрес
@@ -28,14 +26,6 @@ const createAdvertsFragment = (template, advertsData) => {
 
     advertsListFragment.appendChild(card);
   }
-}
-
-createAdvertsFragment(cardTemplate, advertsDataArray);
-
-const getAdvertsCardsArray = () => {
   return advertsListFragment;
 }
 export { getAdvertsCardsArray };
-
-//document.querySelector('.map__canvas').appendChild(advertsListFragment.querySelector('.popup'));
-

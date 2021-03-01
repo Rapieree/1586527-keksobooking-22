@@ -1,23 +1,5 @@
-// decimalSign - Символов после запятой, 0 для целых чисел
-const getRandomNumb = (min, max, decimalSign = 0) => { // Рандомное число в диапазоне
-  if ((min < 0 || max < 0 || decimalSign < 0 || !Number.isInteger(decimalSign)) || Math.abs(min - max) === 0) {
-    return;
-  }
-  if (decimalSign === 0 && !(Number.isInteger(min) && Number.isInteger(max))) {
-    return;
-  }
-  let realMin = Math.min(min, max);
-  let realMax = Math.max(min, max);
-  let ratio = Math.pow(10, decimalSign);
-  let random = realMin - 0.5 / ratio + Math.random() * (realMax - realMin + 1 / ratio);
-  // модифицированный вариант с сайта https://learn.javascript.ru/task/random-int-min-max
-
-  random = parseFloat(random.toFixed(decimalSign));
-  return Number.isInteger(random) ? Math.round(random) : random;
-}
-export { getRandomNumb };
-
-const setNodeProperty = (mainNode, selectorName, property, value) => { // Изменить свойство узла, если пустое - скрыть
+// Изменить свойство узла, если узел пустой - скрыть
+const setNodeProperty = (mainNode, selectorName, property, value) => {
   let cardNode = mainNode.querySelector(selectorName);
   property === 'text' ? cardNode.textContent = value : cardNode.setAttribute(property, value);
   (value === '' || value === null) ? cardNode.setAttribute('hidden', '') : '';
@@ -25,7 +7,8 @@ const setNodeProperty = (mainNode, selectorName, property, value) => { // Изм
 }
 export { setNodeProperty };
 
-const getNameTypeHousing = (typeHousing) => { // Получить тип жилья, на русском
+// Получить тип жилья, на русском
+const getNameTypeHousing = (typeHousing) => {
   switch (typeHousing) {
     case 'flat':
       return 'Квартира';
@@ -40,7 +23,8 @@ const getNameTypeHousing = (typeHousing) => { // Получить тип жил�
 }
 export { getNameTypeHousing };
 
-const getTextCapacity = (NumberRooms, NumberGuests) => { // Получить строку кол-ва комнат и гостей, с окончаниями
+// Получить строку кол-ва комнат и гостей, с окончаниями
+const getTextCapacity = (NumberRooms, NumberGuests) => {
   let roomsText;
   let guestsText;
 
@@ -71,12 +55,14 @@ const getTextCapacity = (NumberRooms, NumberGuests) => { // Получить с�
 }
 export { getTextCapacity };
 
-const getTextTime = (timeCheckin, timeCheckout) => { // Строка заезда/выезда
+// Получить строку заезда/выезда
+const getTextTime = (timeCheckin, timeCheckout) => {
   return `Заезд после ${timeCheckin}, выезд до ${timeCheckout}`;
 }
 export { getTextTime };
 
-const getNodeFeatures = (templateNode, featuresData) => { // Блок особенностей
+// Получить узел блока особенностей
+const getNodeFeatures = (templateNode, featuresData) => {
   let templateFeatures = templateNode.querySelector('.popup__features').cloneNode(true);
   for (let templateFeature of templateFeatures.childNodes) {
     if (templateFeature.nodeName !== '#text') {
@@ -92,7 +78,8 @@ const getNodeFeatures = (templateNode, featuresData) => { // Блок особе
 }
 export { getNodeFeatures };
 
-const getNodePhotos = (templateNode, photosData) => { // Блок фотографий
+// Получить узел блока фотографий
+const getNodePhotos = (templateNode, photosData) => {
   let templatePhotoNode = templateNode.querySelector('.popup__photos').cloneNode();
   let photosFragment = document.createDocumentFragment();
   for (let i = 0; i < photosData.length; i++) {
@@ -105,3 +92,91 @@ const getNodePhotos = (templateNode, photosData) => { // Блок фотогра
   return templatePhotoNode;
 }
 export { getNodePhotos };
+
+// попап ошибки получения данных с сервера
+const errorServerPopup = document.querySelector('.error-server');
+const errorServerbutton = errorServerPopup.querySelector('.error-server__button');
+
+// открыть/закрыть попап с ошибкой сервера
+const openErrorServerPopup = (flag) => {
+  const openClass = 'error-server--open';
+  if (flag && !errorServerPopup.classList.contains(openClass)) {
+    errorServerPopup.classList.add(openClass);
+
+    errorServerbutton.addEventListener('click', () => {
+      errorServerPopup.classList.remove(openClass);
+    });
+  }
+  else if (!flag && errorServerPopup.classList.contains(openClass)) {
+    errorServerPopup.classList.remove(openClass);
+  }
+}
+export { openErrorServerPopup };
+
+
+// Попап успешной отправки / ошибки данных на сервер
+
+// Вернуть открытый попап
+const getOpenPopup = () => {
+  const succesNode = document.querySelector('.success');
+  const errorNode = document.querySelector('.error');
+  if(succesNode) {
+    return succesNode;
+  }
+  else if (errorNode) {
+    return errorNode;
+  }
+  else {
+    return null;
+  }
+}
+
+// Установить / Сбросить обработчики закрытия попапа
+const onPopupEscapeKeyDown = (evt) => {
+  if(evt.key === ('Escape' || 'Esc')) {
+    evt.preventDefault();
+    getOpenPopup().remove();
+    document.removeEventListener('keydown', onPopupEscapeKeyDown);
+  }
+}
+
+const onPopupClick = () => {
+  getOpenPopup().remove();
+  document.removeEventListener('keydown', onPopupEscapeKeyDown);
+}
+
+
+// Успешная отправка на сервер
+const mainTag = document.querySelector('main');
+const successSendPopup = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
+
+const openSuccessSendPopup = (flag) => {
+  if (flag && getOpenPopup() === null) {
+    mainTag.prepend(successSendPopup);
+    document.addEventListener('keydown', onPopupEscapeKeyDown);
+    getOpenPopup().addEventListener('click', onPopupClick);
+  }
+  else if(!flag && getOpenPopup()) {
+    getOpenPopup().removeEventListener('click', onPopupClick);
+    getOpenPopup().remove();
+    document.removeEventListener('keydown', onPopupEscapeKeyDown);
+  }
+}
+export { openSuccessSendPopup };
+
+// Ошибка отправки на сервер
+const errorSendPopup = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
+
+const openErrorSendPopup = (flag) => {
+  if (flag && getOpenPopup() === null) {
+    mainTag.prepend(errorSendPopup);
+    document.addEventListener('keydown', onPopupEscapeKeyDown);
+    getOpenPopup().addEventListener('click', onPopupClick);
+  }
+  else if(!flag && getOpenPopup()) {
+    getOpenPopup().removeEventListener('click', onPopupClick);
+    getOpenPopup().remove();
+    document.removeEventListener('keydown', onPopupEscapeKeyDown);
+  }
+}
+export { openErrorSendPopup };
