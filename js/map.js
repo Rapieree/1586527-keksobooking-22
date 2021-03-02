@@ -1,10 +1,7 @@
 import { setStatusFilterForm } from './filter-form.js';
-import { setAddressValue, setStatusAdvertForm } from './advert-form.js';
-import { getAdvertsDataArray } from './data.js';
+import { setAddressValue, initializingAdvertForm } from './advert-form.js';
 import { getAdvertsCardsArray } from './cards.js';
-
-const AdvertsDataArray = getAdvertsDataArray();
-const AdvertsCardsArray = getAdvertsCardsArray();
+import { getAdvertsDataOfServer, errorServerHandler } from './server.js';
 
 const COORD_TOKYO = {
   x: 35.68070,
@@ -19,14 +16,14 @@ let adressCoord = {
 /* global L:readonly */
 const map = L.map('map-canvas')
   .on('load', () => {
-    setStatusAdvertForm(true);
-    setStatusFilterForm(true);
+    initializingAdvertForm();
     setAddressValue(adressCoord);
+    setStatusFilterForm(true);
   })
   .setView({
     lat: COORD_TOKYO.x,
     lng: COORD_TOKYO.y,
-  }, 12);
+  }, 9);
 
 L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -66,12 +63,20 @@ mainPinMarker.on('move', (evt) => {
 
 mainPinMarker.addTo(map);
 
-const setExtraMarkers = (dataArray, cardsArray) => {
+const setMainMarker = (coord) => {
+  mainPinMarker.setLatLng( {
+    lat: coord.x,
+    lng: coord.y,
+  });
+}
+
+const setExtraMarkers = (dataArray) => {
+  const cardsArray = getAdvertsCardsArray(dataArray);
   for (let i = 0; i < dataArray.length; i++) {
     const extraPoint = L.marker(
       {
-        lat: dataArray[i].location.x,
-        lng: dataArray[i].location.y,
+        lat: dataArray[i].location.lat,
+        lng: dataArray[i].location.lng,
       },
       {
         icon: extraPinIcon,
@@ -80,6 +85,13 @@ const setExtraMarkers = (dataArray, cardsArray) => {
     extraPoint.bindPopup(cardsArray.children[i]);
     extraPoint.addTo(map);
   }
-}
+};
 
-setExtraMarkers(AdvertsDataArray, AdvertsCardsArray);
+const resetMap = () => {
+  setMainMarker(COORD_TOKYO);
+  getAdvertsDataOfServer(setExtraMarkers, errorServerHandler);
+}
+export { resetMap };
+
+getAdvertsDataOfServer(setExtraMarkers, errorServerHandler);
+
