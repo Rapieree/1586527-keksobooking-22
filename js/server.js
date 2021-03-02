@@ -5,7 +5,7 @@ import { resetAdvertForm } from './advert-form.js';
 import { resetMap } from './map.js';
 
 
-const GET_DATA_ADRESS = 'https://22.javascript.pages.academy/keksobooking/datas';
+const GET_DATA_ADRESS = 'https://22.javascript.pages.academy/keksobooking/data';
 const SEND_DATA_ADRESS = 'https://22.javascript.pages.academy/keksobooking';
 
 //Обработчик ошибки при получении данных
