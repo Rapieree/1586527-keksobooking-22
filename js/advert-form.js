@@ -98,16 +98,19 @@ const setAddressValue = ({ x, y }) => {
 export { setAddressValue };
 
 // Инициализация кнопки отправления данных на сервер
-advertForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  const formData = new FormData(evt.target);
-  sendAdvertOnServer(formData, successSendHandler, errorSendHandler);
-})
+const onSubmitOfAdvertForm = () => {
+  advertForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const formData = new FormData(evt.target);
+    sendAdvertOnServer(formData, successSendHandler, errorSendHandler);
+  });
+}
 
 const resetAdvertForm = () => {
   advertForm.reset();
 }
 export { resetAdvertForm };
+
 const initializingAdvertForm = () => {
   setStatusAdvertForm(true);
   syncRoomAndCapacity();
@@ -117,7 +120,6 @@ const initializingAdvertForm = () => {
   timeInCombobox.addEventListener('input', syncCheckTime());
   timeOutCombobox.addEventListener('input', syncCheckTime());
   roomsCombobox.addEventListener('change', syncRoomAndCapacity);
+  onSubmitOfAdvertForm();
 }
 export { initializingAdvertForm };
-
-setStatusAdvertForm(false);
