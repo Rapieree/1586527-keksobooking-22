@@ -27,12 +27,8 @@ const getAdvertsDataOfServer = (onSuccess, onError) => {
     })
     .then((json) => {
       onSuccess(json);
-      // eslint-disable-next-line no-console
-      console.log(json);
     })
     .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log(err);
       onError();
     });
 };
