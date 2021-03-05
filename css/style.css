@@ -1012,7 +1012,7 @@ fieldset {
   top: 0;
   left: 0;
   width: 100%;
-  padding: 8px;
+  padding: 4px;
   background-color: rgb(233, 113, 113);
   border-radius: 3px;
   opacity: 0.9;
@@ -1022,7 +1022,7 @@ fieldset {
   display: block;
 }
 
-.error-server__message {
+.error-server__title, .error-server__message {
   margin: 0;
   padding: 0;
   font-size: 20px;
@@ -1035,7 +1035,7 @@ fieldset {
   padding: 0;
   position: absolute;
   top: 50%;
-  right: 5px;
+  right: 10px;
   width: 25px;
   height: 25px;
   background-color: transparent;

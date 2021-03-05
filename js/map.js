@@ -1,37 +1,21 @@
-import { setStatusFilterForm } from './filter-form.js';
 import { setAddressValue, initializingAdvertForm } from './advert-form.js';
-import { getAdvertsCardsArray } from './cards.js';
+import { getAdvertCard } from './cards.js';
 import { getAdvertsDataOfServer, errorServerHandler } from './server.js';
+import { sortAdverts } from './util.js';
 
-const COORD_TOKYO = {
-  x: 35.68070,
-  y: 139.76855,
+const MAX_ADVERTS = 10;
+
+const CoordTokyo = {
+  X: 35.68070,
+  Y: 139.76855,
 }
 
 let adressCoord = {
-  x: COORD_TOKYO.x,
-  y: COORD_TOKYO.y,
+  x: CoordTokyo.X,
+  y: CoordTokyo.Y,
 }
 
 /* global L:readonly */
-const map = L.map('map-canvas')
-  .on('load', () => {
-    initializingAdvertForm();
-    setAddressValue(adressCoord);
-    setStatusFilterForm(true);
-  })
-  .setView({
-    lat: COORD_TOKYO.x,
-    lng: COORD_TOKYO.y,
-  }, 9);
-
-L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  },
-).addTo(map);
-
 const mainPinIcon = L.icon({
   iconUrl: 'img/main-pin.svg',
   iconSize: [52, 52],
@@ -46,8 +30,8 @@ const extraPinIcon = L.icon({
 
 const mainPinMarker = L.marker(
   {
-    lat: COORD_TOKYO.x,
-    lng: COORD_TOKYO.y,
+    lat: CoordTokyo.X,
+    lng: CoordTokyo.Y,
   },
   {
     draggable: true,
@@ -61,37 +45,70 @@ mainPinMarker.on('move', (evt) => {
   setAddressValue(adressCoord);
 });
 
-mainPinMarker.addTo(map);
+const map = L.map('map-canvas');
+const extraMarkersLayer = L.layerGroup();
 
-const setMainMarker = (coord) => {
-  mainPinMarker.setLatLng( {
-    lat: coord.x,
-    lng: coord.y,
-  });
-}
-
+// Установить метки объявлений
 const setExtraMarkers = (dataArray) => {
-  const cardsArray = getAdvertsCardsArray(dataArray);
-  for (let i = 0; i < dataArray.length; i++) {
-    const extraPoint = L.marker(
+  const sortedAdverts = dataArray
+    .slice()
+    .sort(sortAdverts)
+    .filter((value) => value.filterFlag !== false) // избавление от неподходящих объявлений
+    .slice(0, MAX_ADVERTS);
+
+  extraMarkersLayer.clearLayers();
+  for (let i = 0; i < sortedAdverts.length; i++) {
+    const extraMarker = L.marker(
       {
-        lat: dataArray[i].location.lat,
-        lng: dataArray[i].location.lng,
+        lat: sortedAdverts[i].location.lat,
+        lng: sortedAdverts[i].location.lng,
       },
       {
         icon: extraPinIcon,
       },
     );
-    extraPoint.bindPopup(cardsArray.children[i]);
-    extraPoint.addTo(map);
+    const advertCard = getAdvertCard(sortedAdverts[i]);
+    extraMarker.bindPopup(advertCard);
+    extraMarker.addTo(extraMarkersLayer);
   }
+  extraMarkersLayer.addTo(map);
 };
+export { setExtraMarkers };
+
+// Инициализация карты
+const initializationMap = () => {
+  map
+    .on('load', () => {
+      initializingAdvertForm(); // Инициализируем форму объявлений
+      setAddressValue(adressCoord); // Передаем ей значение главной метки
+      mainPinMarker.addTo(map); // Добавляем главную метку на карту
+    })
+    .setView(
+      {
+        lat: CoordTokyo.X,
+        lng: CoordTokyo.Y,
+      }, 9);
+
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    },
+  )
+    .addTo(map);
+}
+export { initializationMap };
+
+const setMainMarker = (coord) => {
+  mainPinMarker.setLatLng({
+    lat: coord.x,
+    lng: coord.y,
+  });
+}
 
 const resetMap = () => {
-  setMainMarker(COORD_TOKYO);
+  setMainMarker(CoordTokyo);
   getAdvertsDataOfServer(setExtraMarkers, errorServerHandler);
 }
 export { resetMap };
-
-getAdvertsDataOfServer(setExtraMarkers, errorServerHandler);
 

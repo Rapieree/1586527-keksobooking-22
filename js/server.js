@@ -9,8 +9,8 @@ const GET_DATA_ADRESS = 'https://22.javascript.pages.academy/keksobooking/data';
 const SEND_DATA_ADRESS = 'https://22.javascript.pages.academy/keksobooking';
 
 //Обработчик ошибки при получении данных
-const errorServerHandler = () => {
-  openErrorServerPopup(true);
+const errorServerHandler = (errorMessage) => {
+  openErrorServerPopup(true, errorMessage);
   setStatusFilterForm(false);
 }
 export { errorServerHandler };
@@ -29,9 +29,7 @@ const getAdvertsDataOfServer = (onSuccess, onError) => {
       onSuccess(json);
     })
     .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log(err);
-      onError();
+      onError(err);
     });
 };
 export { getAdvertsDataOfServer };

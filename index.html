@@ -78,7 +78,8 @@
     <!-- Форма объявления -->
     <section class="notice">
       <h2 class="notice__title">Ваше объявление</h2>
-      <form class="ad-form" method="post" enctype="multipart/form-data" action="https://22.javascript.pages.academy/keksobooking" autocomplete="off">
+      <form class="ad-form" method="post" enctype="multipart/form-data"
+        action="https://22.javascript.pages.academy/keksobooking" autocomplete="off">
         <fieldset class="ad-form-header">
           <legend class="ad-form-header__title">Ваша фотография (для карты)</legend>
           <div class="ad-form-header__upload">
@@ -86,7 +87,8 @@
               <img src="img/muffin-grey.svg" alt="Аватар пользователя" width="40" height="44">
             </div>
             <div class="ad-form__field">
-              <input type="file" id="avatar" name="avatar" class="ad-form-header__input visually-hidden" accept="image/png, image/jpeg, image/gif">
+              <input type="file" id="avatar" name="avatar" class="ad-form-header__input visually-hidden"
+                accept="image/png, image/jpeg, image/gif">
               <label class="ad-form-header__drop-zone" for="avatar">Загрузить<br>фото...</label>
             </div>
             <p class="ad-form-header__info">Заполните все обязательные поля, назначьте цену, загрузите аватар и фото
@@ -96,7 +98,8 @@
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="title">Заголовок объявления</label>
-          <input id="title" name="title" type="text" placeholder="Милая, уютная квартирка в центре Токио" minlength="30" maxlength="100" required>
+          <input id="title" name="title" type="text" placeholder="Милая, уютная квартирка в центре Токио" minlength="30"
+            maxlength="100" required>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="address">Адрес (координаты)</label>
@@ -176,7 +179,8 @@
           <label class="ad-form__label">Фотография жилья</label>
           <div class="ad-form__photo-container">
             <div class="ad-form__upload">
-              <input type="file" id="images" name="images" class="ad-form__input visually-hidden" accept="image/png, image/jpeg" multiple>
+              <input type="file" id="images" name="images" class="ad-form__input visually-hidden"
+                accept="image/png, image/jpeg" multiple>
               <label for="images" class="ad-form__drop-zone">Загрузить<br>фото...</label>
             </div>
             <div class="ad-form__photo"></div>
@@ -252,12 +256,13 @@
   <!-- Сообщение об ошибке при загрузке данных -->
   <!-- error-server--open - показать ошибку -->
   <div class="error-server">
-    <p class="error-server__message">Ошибка при загрузке данных с сервера</p>
+    <p class="error-server__title">Ошибка при загрузке данных с сервера</p>
+    <p class="error-server__message"></p>
     <button class="error-server__button" type="button" aria-label="Закрыть уведомление об ошибке"></button>
   </div>
 
   <script src="leaflet/leaflet.js"></script>
-  <script src="js/main.js" type="module" async></script>
+  <script src="js/main.js" type="module"></script>
 </body>
 
 </html>

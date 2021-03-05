@@ -1,3 +1,10 @@
+const DEFAULT_FILTER = 'any'; // исходный вариант фильтра
+
+const PRICE = { // Значения стоимости для присвоения категории цены
+  LOW_LIMIT : 10000,
+  MIDDLE_LIMIT : 50000,
+}
+
 // Изменить свойство узла, если узел пустой - скрыть
 const setNodeProperty = (mainNode, selectorName, property, value) => {
   let cardNode = mainNode.querySelector(selectorName);
@@ -98,9 +105,10 @@ const errorServerPopup = document.querySelector('.error-server');
 const errorServerbutton = errorServerPopup.querySelector('.error-server__button');
 
 // открыть/закрыть попап с ошибкой сервера
-const openErrorServerPopup = (flag) => {
+const openErrorServerPopup = (flag, errorMessage) => {
   const openClass = 'error-server--open';
   if (flag && !errorServerPopup.classList.contains(openClass)) {
+    errorServerPopup.querySelector('.error-server__message').textContent = ` ${errorMessage}`;
     errorServerPopup.classList.add(openClass);
 
     errorServerbutton.addEventListener('click', () => {
@@ -180,3 +188,89 @@ const openErrorSendPopup = (flag) => {
   }
 }
 export { openErrorSendPopup };
+
+// Функции для фильтрации объявлений
+
+// Соотношение числовой стоимости жилья к фильтровому
+const getTypeOfPrice = (price) => {
+  if (price <= PRICE.LOW_LIMIT) {
+    return 'low';
+  }
+  else if (price >= PRICE.LOW_LIMIT && price <= PRICE.MIDDLE_LIMIT) {
+    return 'middle';
+  }
+  else if (price >= 50000) {
+    return 'high';
+  }
+}
+export { getTypeOfPrice };
+
+// Расчет рейтинга
+const getAdvertRank = (advert) => {
+  let filterTypeOfHouse = document.querySelector('#housing-type').value;
+  const filterPrice = document.querySelector('#housing-price').value;
+  const filterRooms = document.querySelector('#housing-rooms').value;
+  const filterGuests = document.querySelector('#housing-guests').value;
+  const filterFeatures = document.querySelectorAll('input[type=checkbox]:checked');
+
+  let rank = 0;
+  if (advert.offer.type === filterTypeOfHouse || filterTypeOfHouse === DEFAULT_FILTER) {
+    rank += 3;
+  }
+  else {
+    return 0;
+  }
+  if (getTypeOfPrice(+advert.offer.price) === filterPrice || filterPrice === DEFAULT_FILTER) {
+    rank += 2;
+  }
+  else {
+    return 0;
+  }
+  if (advert.offer.rooms === +filterRooms || filterRooms === DEFAULT_FILTER) {
+    rank += 1;
+  }
+  else {
+    return 0;
+  }
+  if (advert.offer.guests === +filterGuests || filterGuests === DEFAULT_FILTER) {
+    rank += 1;
+  }
+  else {
+    return 0;
+  }
+
+  for(let filter of filterFeatures) {
+    let successFind = false;
+    for(let advertValue of advert.offer.features) {
+      if (advertValue === filter.defaultValue && filter.checked === true) {
+        successFind = true;
+        rank += 0.25;
+        break;
+      }
+    }
+    if(successFind === false) {
+      return 0;
+    }
+  }
+
+  return rank;
+}
+export { getAdvertRank };
+
+// Функция-компаратор по рейтингу с пометкой объявления о соответствии фильтру
+const sortAdverts = (advertA, advertB) => {
+  const rankA = getAdvertRank(advertA);
+  const rankB = getAdvertRank(advertB);
+
+  advertA.filterFlag = true;
+  advertB.filterFlag = true;
+
+  if(rankA === 0) {
+    advertA.filterFlag = false;
+  }
+  if(rankB === 0) {
+    advertB.filterFlag = false;
+  }
+  return rankB - rankA;
+}
+export { sortAdverts };
