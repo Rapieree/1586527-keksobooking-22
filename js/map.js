@@ -1,6 +1,7 @@
 import { setAddressValue, initializingAdvertForm } from './advert-form.js';
 import { getAdvertCard } from './cards.js';
 import { getAdvertsDataOfServer, errorServerHandler } from './server.js';
+import { sortAdverts } from './util.js';
 
 const MAX_ADVERTS = 10;
 
@@ -43,89 +44,6 @@ mainPinMarker.on('move', (evt) => {
   adressCoord.y = evt.target.getLatLng().lng.toFixed(5);
   setAddressValue(adressCoord);
 });
-
-const DEFAULT_FILTER = 'any'; // Любой вариант фильтра
-
-// Соотношение числовой стоимости жилья к фильтровому
-const getTypeOfPrice = (price) => {
-  if (price <= 10000) {
-    return 'low';
-  }
-  else if (price >= 10000 && price <= 50000) {
-    return 'middle';
-  }
-  else if (price >= 50000) {
-    return 'high';
-  }
-}
-
-// Расчет рейтинга
-const getAdvertRank = (advert) => {
-  let filterTypeOfHouse = document.querySelector('#housing-type').value;
-  const filterPrice = document.querySelector('#housing-price').value;
-  const filterRooms = document.querySelector('#housing-rooms').value;
-  const filterGuests = document.querySelector('#housing-guests').value;
-  const filterFeatures = document.querySelectorAll('input[type=checkbox]:checked');
-
-  let rank = 0;
-  if (advert.offer.type === filterTypeOfHouse || filterTypeOfHouse === DEFAULT_FILTER) {
-    rank += 3;
-  }
-  else {
-    return 0;
-  }
-  if (getTypeOfPrice(+advert.offer.price) === filterPrice || filterPrice === DEFAULT_FILTER) {
-    rank += 2;
-  }
-  else {
-    return 0;
-  }
-  if (advert.offer.rooms === +filterRooms || filterRooms === DEFAULT_FILTER) {
-    rank += 1;
-  }
-  else {
-    return 0;
-  }
-  if (advert.offer.guests === +filterGuests || filterGuests === DEFAULT_FILTER) {
-    rank += 1;
-  }
-  else {
-    return 0;
-  }
-
-  for(let filter of filterFeatures) {
-    let successFind = false;
-    for(let advertValue of advert.offer.features) {
-      if (advertValue === filter.defaultValue && filter.checked === true) {
-        successFind = true;
-        rank += 0.25;
-        break;
-      }
-    }
-    if(successFind === false) {
-      return 0;
-    }
-  }
-
-  return rank;
-}
-
-// Сортировка с пометкой объявления о соответствии фильтру
-const sortAdverts = (advertA, advertB) => {
-  const rankA = getAdvertRank(advertA);
-  const rankB = getAdvertRank(advertB);
-
-  advertA.filterFlag = true;
-  advertB.filterFlag = true;
-
-  if(rankA === 0) {
-    advertA.filterFlag = false;
-  }
-  if(rankB === 0) {
-    advertB.filterFlag = false;
-  }
-  return rankB - rankA;
-}
 
 const map = L.map('map-canvas');
 const extraMarkersLayer = L.layerGroup();
