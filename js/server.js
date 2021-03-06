@@ -2,7 +2,7 @@ import { openErrorServerPopup } from './util.js';
 import { openErrorSendPopup, openSuccessSendPopup } from './util.js';
 import { setStatusFilterForm, resetFilterForm } from './filter-form.js';
 import { resetAdvertForm } from './advert-form.js';
-import { resetMap } from './map.js';
+export { resetMap } from './map.js';
 
 
 const GET_DATA_ADRESS = 'https://22.javascript.pages.academy/keksobooking/data';
@@ -38,17 +38,16 @@ export { getAdvertsDataOfServer };
 const successSendHandler = () => {
   openSuccessSendPopup(true);
   resetAdvertForm();
-  resetMap();
   resetFilterForm();
 }
 export { successSendHandler };
 
+// Обработчик ошибки при отправлении данных
 const errorSendHandler = () => {
   openErrorSendPopup(true);
 }
 export { errorSendHandler };
 
-// Обработчик ошибки при отправлении данных
 
 // Отправление данных с формы на сервер
 const sendAdvertOnServer = (formData, onSuccess, onError) => {
@@ -62,20 +61,11 @@ const sendAdvertOnServer = (formData, onSuccess, onError) => {
   )
     .then((response) => {
       if (response.ok) {
-        return response.json();
+        onSuccess();
       }
-
-      throw new Error(`${response.status} ${response.statusText}`);
-    })
-    .then((json) => {
-      onSuccess();
-      // eslint-disable-next-line no-console
-      console.log(json);
-    })
-    .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log(err);
-      onError();
+      else {
+        onError();
+      }
     });
 };
 export { sendAdvertOnServer };

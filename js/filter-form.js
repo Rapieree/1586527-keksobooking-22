@@ -32,8 +32,6 @@ const filterGuests = document.querySelector('#housing-guests');
 const filterFeatures = document.querySelectorAll('.map__checkbox');
 
 const filterInitialization = (cb) => {
-  setStatusFilterForm(true);
-
   filterTypeOfHouse.addEventListener('change', () => cb());
   filterPrice.addEventListener('change', () => cb());
   filterRooms.addEventListener('change', () => cb());

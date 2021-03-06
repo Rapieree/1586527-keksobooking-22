@@ -1,6 +1,6 @@
 const DEFAULT_FILTER = 'any'; // исходный вариант фильтра
 
-const PRICE = { // Значения стоимости для присвоения категории цены
+const Price = { // Значения стоимости для присвоения категории цены
   LOW_LIMIT : 10000,
   MIDDLE_LIMIT : 50000,
 }
@@ -193,10 +193,10 @@ export { openErrorSendPopup };
 
 // Соотношение числовой стоимости жилья к фильтровому
 const getTypeOfPrice = (price) => {
-  if (price <= PRICE.LOW_LIMIT) {
+  if (price <= Price.LOW_LIMIT) {
     return 'low';
   }
-  else if (price >= PRICE.LOW_LIMIT && price <= PRICE.MIDDLE_LIMIT) {
+  else if (price >= Price.LOW_LIMIT && price <= Price.MIDDLE_LIMIT) {
     return 'middle';
   }
   else if (price >= 50000) {
@@ -242,7 +242,7 @@ const getAdvertRank = (advert) => {
   for(let filter of filterFeatures) {
     let successFind = false;
     for(let advertValue of advert.offer.features) {
-      if (advertValue === filter.defaultValue && filter.checked === true) {
+      if (advertValue === filter.defaultValue) {
         successFind = true;
         rank += 0.25;
         break;

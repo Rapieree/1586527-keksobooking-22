@@ -1,6 +1,6 @@
 import { setAddressValue, initializingAdvertForm } from './advert-form.js';
 import { getAdvertCard } from './cards.js';
-import { getAdvertsDataOfServer, errorServerHandler } from './server.js';
+import { errorServerHandler } from './server.js';
 import { sortAdverts } from './util.js';
 
 const MAX_ADVERTS = 10;
@@ -78,37 +78,42 @@ export { setExtraMarkers };
 // Инициализация карты
 const initializationMap = () => {
   map
-    .on('load', () => {
-      initializingAdvertForm(); // Инициализируем форму объявлений
-      setAddressValue(adressCoord); // Передаем ей значение главной метки
-      mainPinMarker.addTo(map); // Добавляем главную метку на карту
-    })
     .setView(
       {
         lat: CoordTokyo.X,
         lng: CoordTokyo.Y,
       }, 9);
 
-  L.tileLayer(
+  const tileLayer = L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     },
   )
+    .on('tileload', () => {
+      initializingAdvertForm(); // Инициализируем форму объявлений
+      setAddressValue(adressCoord); // Передаем ей значение главной метки
+      mainPinMarker.addTo(map); // Добавляем главную метку на карту
+      tileLayer.off('tileload');
+    })
+    .on('tileerror', () => {
+      errorServerHandler('Ошибка при загрузке карты!');
+      map.remove(tileLayer);
+    })
     .addTo(map);
+  return map.hasLayer(tileLayer);
 }
 export { initializationMap };
 
 const setMainMarker = (coord) => {
   mainPinMarker.setLatLng({
-    lat: coord.x,
-    lng: coord.y,
+    lat: coord.X,
+    lng: coord.Y,
   });
 }
 
 const resetMap = () => {
   setMainMarker(CoordTokyo);
-  getAdvertsDataOfServer(setExtraMarkers, errorServerHandler);
 }
 export { resetMap };
 
