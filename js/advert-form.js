@@ -2,8 +2,14 @@ import {
   sendAdvertOnServer,
   successSendHandler,
   errorSendHandler,
-  resetMap as clearAdress
+  resetMap as clearAddress
 } from './server.js';
+import {
+  onAvatarFileChange,
+  onPhotosFilesChange,
+  clearAvatar,
+  clearPhotos
+} from './upload-photo.js';
 
 const MAX_PRICE = 1000000;
 const MIN_PRICE = {
@@ -12,41 +18,87 @@ const MIN_PRICE = {
   'house': 5000,
   'palace': 10000,
 }
-const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
-const SRC_AVATAR = 'img/muffin-grey.svg';
+const MIN_LENGTH_TITLE = 30;
+const MAX_LENGTH_TITLE = 100;
+const ERROR_CLASS_TITLE = 'ad-form__title-input--error';
+const ERROR_CLASS_PRICE = 'ad-form__price-input--error';
 
+const timeInCombobox = document.querySelector('#timein');
+const timeOutCombobox = document.querySelector('#timeout');
+const roomsCombobox = document.querySelector('#room_number');
+const capacityCombobox = document.querySelector('#capacity');
+const advertForm = document.querySelector('.ad-form');
+const advertFieldsetList = advertForm.querySelectorAll('fieldset');
+const addressInput = document.querySelector('#address');
+const avatarFileInput = document.querySelector('#avatar');
+const housePhotoFileInput = document.querySelector('#images');
 const typeOfHouseCombobox = document.querySelector('#type');
 const priceInput = document.querySelector('#price');
-const avatarFileInput = document.querySelector('#avatar');
-const avatarPreview = document.querySelector('.ad-form-header__preview img');
-const housePhotoFileInput = document.querySelector('#images');
-const housePhotoPreview = document.querySelector('.ad-form__photo');
+const titleInput = document.querySelector('#title');
+const clearButton = document.querySelector('.ad-form__reset');
 
-const setMinPrice = () => { // Минимальная цена при выборе типа жилья
+// Устновить минимальную цену при выборе типа жилья
+const setMinPrice = () => {
   const valueTypeOfHouse = typeOfHouseCombobox.options[typeOfHouseCombobox.selectedIndex].getAttribute('value');
   priceInput.setAttribute('min', MIN_PRICE[valueTypeOfHouse]);
   priceInput.setAttribute('placeholder', MIN_PRICE[valueTypeOfHouse]);
 }
 
+// Валидация стоимости жилья за ночь
 const validatePriceInput = () => {
   const minPriceValue = MIN_PRICE[typeOfHouseCombobox.options[typeOfHouseCombobox.selectedIndex].getAttribute('value')];
   const TypeOfHouse = typeOfHouseCombobox.options[typeOfHouseCombobox.selectedIndex].textContent.toLowerCase();
-
   if (Number(priceInput.value) < minPriceValue) {
     priceInput.setCustomValidity(`Минимальная цена за ночь для типа жилья: ${TypeOfHouse} - ${minPriceValue} рублей`);
-  } else if (Number(priceInput.value) > MAX_PRICE) {
+  }
+  else if (Number(priceInput.value) > MAX_PRICE) {
     priceInput.setCustomValidity('Максимальная цена за ночь: ' + MAX_PRICE);
-    //priceInput.value = MAX_PRICE;
-  } else {
+  }
+  else {
     priceInput.setCustomValidity('');
   }
   priceInput.reportValidity();
 }
 
-const timeInCombobox = document.querySelector('#timein');
-const timeOutCombobox = document.querySelector('#timeout');
+// Сбросить состояние ошибки валидации
+const resetInvalidInputs = () => {
+  (titleInput.classList.contains(ERROR_CLASS_TITLE)) ? titleInput.classList.remove(ERROR_CLASS_TITLE) : '';
+  (priceInput.classList.contains(ERROR_CLASS_PRICE)) ? priceInput.classList.remove(ERROR_CLASS_PRICE) : '';
+  titleInput.setCustomValidity('');
+  priceInput.setCustomValidity('');
+}
 
-const syncCheckTime = (evt) => { // синхронизация времени въезда и выезда
+// При ошибке валидации заголовка объявления
+const onTitleInputInvalid = () => {
+  (!titleInput.classList.contains(ERROR_CLASS_TITLE)) ? titleInput.classList.add(ERROR_CLASS_TITLE) : '';
+}
+
+// При ошибке валидации цены
+const onPriceInputInvalid = () => {
+  (!priceInput.classList.contains(ERROR_CLASS_PRICE)) ? priceInput.classList.add(ERROR_CLASS_PRICE) : '';
+}
+
+// Валидация заголовка объявления
+const validateTitleInput = () => {
+  const lengthField = titleInput.value.length;
+  if (lengthField < MIN_LENGTH_TITLE) {
+    titleInput.setCustomValidity(
+      `Минимальная длина заголовка: ${MIN_LENGTH_TITLE} симв.
+      Осталось ввести: ${MIN_LENGTH_TITLE - lengthField} симв.`);
+  }
+  else if (lengthField > MAX_LENGTH_TITLE) {
+    titleInput.setCustomValidity(
+      `Максимальная длина заголовка: ${MAX_LENGTH_TITLE} симв.
+      Уберите ${MAX_LENGTH_TITLE - lengthField} симв.`);
+  }
+  else {
+    titleInput.setCustomValidity('');
+  }
+  titleInput.reportValidity();
+}
+
+// синхронизация времени въезда и выезда
+const syncCheckTime = (evt) => {
   if (evt.target.getAttribute('id') === timeInCombobox.getAttribute('id')) {
     timeOutCombobox.selectedIndex = evt.target.selectedIndex;
   }
@@ -56,9 +108,6 @@ const syncCheckTime = (evt) => { // синхронизация времени в
 }
 
 // Синхронизация полей кол-ва комнат и гостей
-const roomsCombobox = document.querySelector('#room_number');
-const capacityCombobox = document.querySelector('#capacity');
-
 const syncRoomAndCapacity = () => {
   const roomSelected = Number(roomsCombobox.options[roomsCombobox.selectedIndex].value);
   for (let i = 0; i < capacityCombobox.options.length; i++) {
@@ -76,62 +125,6 @@ const syncRoomAndCapacity = () => {
     }
   }
 }
-
-// Установить превью аватарки при выборе файла
-const onChangeAvatarFile = (evt) => {
-  const file = evt.target.files[0];
-  const fileName = file.name.toLowerCase();
-
-  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
-
-  if (matches) {
-    const reader = new FileReader();
-
-    reader.addEventListener('load', () => {
-      avatarPreview.src = reader.result;
-    });
-
-    reader.readAsDataURL(file);
-  }
-}
-
-// Установить превью при выборе фотографии
-const onChangePhotosFiles = (evt) => {
-  const files = evt.target.files;
-  if (files.length > 8) {
-    alert('Ошибка, можно выбрать не более 8 файлов');
-    return false;
-  }
-  for (let i = 0; i < files.length; i++) {
-    let matches = FILE_TYPES.some((it) => files[i].name.toLowerCase().endsWith(it));
-    if (!matches) {
-      alert('Ошибка! Неверный формат файлов!');
-      return false;
-    }
-  }
-
-  const imagesFragment = document.createDocumentFragment();
-
-
-  for (let i = 0; i < files.length; i++) {
-    const reader = new FileReader();
-    reader.readAsDataURL(files[i]);
-    const imageElement = document.createElement('img');
-    reader.addEventListener('load', () => {
-      imageElement.width = 70;
-      imageElement.height = 70;
-      imageElement.src = reader.result;
-      imageElement.alt = 'Фотография жилья ' + i + 1;
-      // reader.readAsDataURL(files[i]);
-    });
-    imagesFragment.appendChild(imageElement);
-  }
-  housePhotoPreview.innerHTML = '';
-  housePhotoPreview.appendChild(imagesFragment);
-}
-
-const advertForm = document.querySelector('.ad-form');
-const advertFieldsetList = advertForm.querySelectorAll('fieldset');
 
 // Активность формы заполнения объявления
 const setStatusAdvertForm = (flag) => {
@@ -153,45 +146,47 @@ const setStatusAdvertForm = (flag) => {
 export { setStatusAdvertForm };
 
 // Установить значение в поле адреса
-const addressInput = document.querySelector('#address');
-
 const setAddressValue = ({ x, y }) => {
   addressInput.setAttribute('value', x + ', ' + y);
 }
 export { setAddressValue };
 
 // Инициализация кнопки отправления данных на сервер
-const onSubmitOfAdvertForm = () => {
-  advertForm.addEventListener('submit', (evt) => {
-    evt.preventDefault();
+const onAdvertFormSubmit = (evt) => {
+  evt.preventDefault();
+  if (evt.target.checkValidity()) {
+    resetInvalidInputs();
     const formData = new FormData(evt.target);
     sendAdvertOnServer(formData, successSendHandler, errorSendHandler);
-  });
+  }
 }
 
+// Очистить форму объявлений
 const resetAdvertForm = () => {
   advertForm.reset();
-  clearAdress();
-  housePhotoPreview.innerHTML = '';
-  avatarPreview.src = SRC_AVATAR;
+  clearAddress();
+  clearAvatar();
+  clearPhotos();
+  resetInvalidInputs();
 }
 export { resetAdvertForm };
 
-const clearButton = document.querySelector('.ad-form__reset');
-
+// Инициализация формы объявлений
 const initializingAdvertForm = () => {
   setStatusAdvertForm(true);
   syncRoomAndCapacity();
   setMinPrice();
   typeOfHouseCombobox.addEventListener('input', setMinPrice);
   priceInput.addEventListener('input', validatePriceInput);
+  priceInput.addEventListener('invalid', onPriceInputInvalid);
+  titleInput.addEventListener('input', validateTitleInput);
+  titleInput.addEventListener('invalid', onTitleInputInvalid);
   timeInCombobox.addEventListener('input', syncCheckTime);
   timeOutCombobox.addEventListener('input', syncCheckTime);
   roomsCombobox.addEventListener('change', syncRoomAndCapacity);
-  avatarFileInput.addEventListener('change', onChangeAvatarFile);
-  housePhotoFileInput.addEventListener('change', onChangePhotosFiles);
+  avatarFileInput.addEventListener('change', onAvatarFileChange);
+  housePhotoFileInput.addEventListener('change', onPhotosFilesChange);
   clearButton.addEventListener('click', resetAdvertForm);
-
-  onSubmitOfAdvertForm();
+  advertForm.addEventListener('submit', onAdvertFormSubmit);
 }
 export { initializingAdvertForm };

@@ -1,9 +1,14 @@
 const DEFAULT_FILTER = 'any'; // исходный вариант фильтра
-
 const Price = { // Значения стоимости для присвоения категории цены
   LOW_LIMIT : 10000,
   MIDDLE_LIMIT : 50000,
 }
+
+const mainTag = document.querySelector('main');
+const errorServerPopup = document.querySelector('.error-server');
+const errorServerbutton = errorServerPopup.querySelector('.error-server__button');
+const successSendPopup = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
+const errorSendPopup = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
 
 // Изменить свойство узла, если узел пустой - скрыть
 const setNodeProperty = (mainNode, selectorName, property, value) => {
@@ -34,11 +39,9 @@ export { getNameTypeHousing };
 const getTextCapacity = (NumberRooms, NumberGuests) => {
   let roomsText;
   let guestsText;
-
   if (NumberRooms === 0 || NumberRooms === '' || NumberGuests === '') {
     return '';
   }
-
   if (/[2-9]1/.test(NumberRooms) || NumberRooms === 1) {
     roomsText = `${NumberRooms} комната`;
   }
@@ -48,7 +51,6 @@ const getTextCapacity = (NumberRooms, NumberGuests) => {
   else {
     roomsText = `${NumberRooms} комнат`;
   }
-
   if (NumberGuests === 0) {
     guestsText = 'не для гостей';
   }
@@ -100,17 +102,12 @@ const getNodePhotos = (templateNode, photosData) => {
 }
 export { getNodePhotos };
 
-// попап ошибки получения данных с сервера
-const errorServerPopup = document.querySelector('.error-server');
-const errorServerbutton = errorServerPopup.querySelector('.error-server__button');
-
 // открыть/закрыть попап с ошибкой сервера
 const openErrorServerPopup = (flag, errorMessage) => {
   const openClass = 'error-server--open';
   if (flag && !errorServerPopup.classList.contains(openClass)) {
     errorServerPopup.querySelector('.error-server__message').textContent = ` ${errorMessage}`;
     errorServerPopup.classList.add(openClass);
-
     errorServerbutton.addEventListener('click', () => {
       errorServerPopup.classList.remove(openClass);
     });
@@ -121,9 +118,7 @@ const openErrorServerPopup = (flag, errorMessage) => {
 }
 export { openErrorServerPopup };
 
-
 // Попап успешной отправки / ошибки данных на сервер
-
 // Вернуть открытый попап
 const getOpenPopup = () => {
   const succesNode = document.querySelector('.success');
@@ -153,11 +148,7 @@ const onPopupClick = () => {
   document.removeEventListener('keydown', onPopupEscapeKeyDown);
 }
 
-
 // Успешная отправка на сервер
-const mainTag = document.querySelector('main');
-const successSendPopup = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
-
 const openSuccessSendPopup = (flag) => {
   if (flag && getOpenPopup() === null) {
     mainTag.prepend(successSendPopup);
@@ -173,8 +164,6 @@ const openSuccessSendPopup = (flag) => {
 export { openSuccessSendPopup };
 
 // Ошибка отправки на сервер
-const errorSendPopup = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
-
 const openErrorSendPopup = (flag) => {
   if (flag && getOpenPopup() === null) {
     mainTag.prepend(errorSendPopup);
@@ -190,7 +179,6 @@ const openErrorSendPopup = (flag) => {
 export { openErrorSendPopup };
 
 // Функции для фильтрации объявлений
-
 // Соотношение числовой стоимости жилья к фильтровому
 const getTypeOfPrice = (price) => {
   if (price <= Price.LOW_LIMIT) {
@@ -199,7 +187,7 @@ const getTypeOfPrice = (price) => {
   else if (price >= Price.LOW_LIMIT && price <= Price.MIDDLE_LIMIT) {
     return 'middle';
   }
-  else if (price >= 50000) {
+  else if (price >= Price.MIDDLE_LIMIT) {
     return 'high';
   }
 }
@@ -212,7 +200,6 @@ const getAdvertRank = (advert) => {
   const filterRooms = document.querySelector('#housing-rooms').value;
   const filterGuests = document.querySelector('#housing-guests').value;
   const filterFeatures = document.querySelectorAll('input[type=checkbox]:checked');
-
   let rank = 0;
   if (advert.offer.type === filterTypeOfHouse || filterTypeOfHouse === DEFAULT_FILTER) {
     rank += 3;
@@ -238,7 +225,6 @@ const getAdvertRank = (advert) => {
   else {
     return 0;
   }
-
   for(let filter of filterFeatures) {
     let successFind = false;
     for(let advertValue of advert.offer.features) {
@@ -252,19 +238,15 @@ const getAdvertRank = (advert) => {
       return 0;
     }
   }
-
   return rank;
 }
-export { getAdvertRank };
 
 // Функция-компаратор по рейтингу с пометкой объявления о соответствии фильтру
 const sortAdverts = (advertA, advertB) => {
   const rankA = getAdvertRank(advertA);
   const rankB = getAdvertRank(advertB);
-
   advertA.filterFlag = true;
   advertB.filterFlag = true;
-
   if(rankA === 0) {
     advertA.filterFlag = false;
   }
