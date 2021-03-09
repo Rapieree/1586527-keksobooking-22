@@ -2,11 +2,11 @@ import { openErrorServerPopup } from './util.js';
 import { openErrorSendPopup, openSuccessSendPopup } from './util.js';
 import { setStatusFilterForm, resetFilterForm } from './filter-form.js';
 import { resetAdvertForm } from './advert-form.js';
-import { resetMap } from './map.js';
+export { resetMap } from './map.js';
 
 
-const GET_DATA_ADRESS = 'https://22.javascript.pages.academy/keksobooking/data';
-const SEND_DATA_ADRESS = 'https://22.javascript.pages.academy/keksobooking';
+const GET_DATA_ADDRESS = 'https://22.javascript.pages.academy/keksobooking/data';
+const SEND_DATA_ADDRESS = 'https://22.javascript.pages.academy/keksobooking';
 
 //Обработчик ошибки при получении данных
 const errorServerHandler = (errorMessage) => {
@@ -17,12 +17,11 @@ export { errorServerHandler };
 
 // Получение данных о похожих объявлениях с сервера
 const getAdvertsDataOfServer = (onSuccess, onError) => {
-  fetch(GET_DATA_ADRESS)
+  fetch(GET_DATA_ADDRESS)
     .then((response) => {
       if (response.ok) {
         return response.json();
       }
-
       throw new Error(`${response.status} ${response.statusText}`);
     })
     .then((json) => {
@@ -38,22 +37,20 @@ export { getAdvertsDataOfServer };
 const successSendHandler = () => {
   openSuccessSendPopup(true);
   resetAdvertForm();
-  resetMap();
   resetFilterForm();
 }
 export { successSendHandler };
 
+// Обработчик ошибки при отправлении данных
 const errorSendHandler = () => {
   openErrorSendPopup(true);
 }
 export { errorSendHandler };
 
-// Обработчик ошибки при отправлении данных
-
 // Отправление данных с формы на сервер
 const sendAdvertOnServer = (formData, onSuccess, onError) => {
   fetch(
-    SEND_DATA_ADRESS,
+    SEND_DATA_ADDRESS,
     {
       method: 'POST',
       credentials: 'same-origin',
@@ -62,20 +59,11 @@ const sendAdvertOnServer = (formData, onSuccess, onError) => {
   )
     .then((response) => {
       if (response.ok) {
-        return response.json();
+        onSuccess();
       }
-
-      throw new Error(`${response.status} ${response.statusText}`);
-    })
-    .then((json) => {
-      onSuccess();
-      // eslint-disable-next-line no-console
-      console.log(json);
-    })
-    .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log(err);
-      onError();
+      else {
+        onError();
+      }
     });
 };
 export { sendAdvertOnServer };

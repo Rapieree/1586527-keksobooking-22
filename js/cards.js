@@ -11,7 +11,6 @@ const cardTemplate = document.querySelector('#card').content.querySelector('.pop
 
 const getAdvertCard = (advertData) => {
   const card = cardTemplate.cloneNode(true);
-
   setNodeProperty(card, '.popup__title', 'text', advertData.offer.title); // Название
   setNodeProperty(card, '.popup__text--address', 'text', advertData.offer.address); // Адрес
   setNodeProperty(card, '.popup__text--price', 'text', advertData.offer.price + ' ₽/ночь'); // Цена

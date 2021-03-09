@@ -1,5 +1,11 @@
 const filterForm = document.querySelector('.map__filters');
+const filterTypeOfHouse = document.querySelector('#housing-type');
+const filterPrice = document.querySelector('#housing-price');
+const filterRooms = document.querySelector('#housing-rooms');
+const filterGuests = document.querySelector('#housing-guests');
+const filterFeatures = document.querySelectorAll('.map__checkbox');
 
+// Активность формы фильтра
 const setStatusFilterForm = (flag) => {
   let NodeList = filterForm.children;
   if(flag === false) {
@@ -11,7 +17,7 @@ const setStatusFilterForm = (flag) => {
   }
   else {
     filterForm.classList.remove('map__filters--disabled');
-    filterForm.removeAttribute('disabled', '');
+    filterForm.removeAttribute('disabled');
     for(let nodeItem of NodeList) {
       nodeItem.removeAttribute('disabled');
     }
@@ -25,22 +31,15 @@ const resetFilterForm = () => {
 }
 export { resetFilterForm };
 
-const filterTypeOfHouse = document.querySelector('#housing-type');
-const filterPrice = document.querySelector('#housing-price');
-const filterRooms = document.querySelector('#housing-rooms');
-const filterGuests = document.querySelector('#housing-guests');
-const filterFeatures = document.querySelectorAll('.map__checkbox');
-
+// Инициализация фильтра
 const filterInitialization = (cb) => {
-  setStatusFilterForm(true);
-
   filterTypeOfHouse.addEventListener('change', () => cb());
   filterPrice.addEventListener('change', () => cb());
   filterRooms.addEventListener('change', () => cb());
   filterGuests.addEventListener('change', () => cb());
-
   filterFeatures.forEach((feature) => {
     feature.addEventListener('change', () => cb());
   });
+  filterForm.addEventListener('reset', () => cb());
 }
 export { filterInitialization };

@@ -88,7 +88,7 @@
             </div>
             <div class="ad-form__field">
               <input type="file" id="avatar" name="avatar" class="ad-form-header__input visually-hidden"
-                accept="image/png, image/jpeg, image/gif">
+                accept=".png, .jpeg, .jpg, .gif, .svg">
               <label class="ad-form-header__drop-zone" for="avatar">Загрузить<br>фото...</label>
             </div>
             <p class="ad-form-header__info">Заполните все обязательные поля, назначьте цену, загрузите аватар и фото
@@ -98,7 +98,7 @@
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="title">Заголовок объявления</label>
-          <input id="title" name="title" type="text" placeholder="Милая, уютная квартирка в центре Токио" minlength="30"
+          <input class="ad-form__title-input" id="title" name="title" type="text" placeholder="Милая, уютная квартирка в центре Токио" minlength="30"
             maxlength="100" required>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
@@ -116,7 +116,7 @@
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="price">Цена за ночь, руб.</label>
-          <input id="price" name="price" type="number" placeholder="1000" min="0" max="1000000" required>
+          <input class="ad-form__price-input" id="price" name="price" type="number" placeholder="1000" min="0" max="1000000" required>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--time">
           <label class="ad-form__label" for="timein">Время заезда и выезда</label>
@@ -183,7 +183,8 @@
                 accept="image/png, image/jpeg" multiple>
               <label for="images" class="ad-form__drop-zone">Загрузить<br>фото...</label>
             </div>
-            <div class="ad-form__photo"></div>
+            <div class="ad-form__photo">
+            </div>
           </div>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--submit">
@@ -261,6 +262,7 @@
     <button class="error-server__button" type="button" aria-label="Закрыть уведомление об ошибке"></button>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js"></script>
   <script src="leaflet/leaflet.js"></script>
   <script src="js/main.js" type="module"></script>
 </body>
