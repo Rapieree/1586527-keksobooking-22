@@ -6,7 +6,7 @@ const Price = { // Значения стоимости для присвоени
 
 const mainTag = document.querySelector('main');
 const errorServerPopup = document.querySelector('.error-server');
-const errorServerbutton = errorServerPopup.querySelector('.error-server__button');
+const errorServerButton = errorServerPopup.querySelector('.error-server__button');
 const successSendPopup = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
 const errorSendPopup = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
 
@@ -108,7 +108,7 @@ const openErrorServerPopup = (flag, errorMessage) => {
   if (flag && !errorServerPopup.classList.contains(openClass)) {
     errorServerPopup.querySelector('.error-server__message').textContent = ` ${errorMessage}`;
     errorServerPopup.classList.add(openClass);
-    errorServerbutton.addEventListener('click', () => {
+    errorServerButton.addEventListener('click', () => {
       errorServerPopup.classList.remove(openClass);
     });
   }

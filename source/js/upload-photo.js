@@ -1,6 +1,7 @@
 
-const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
+const TYPES_OF_FILES = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
 const SRC_AVATAR = 'img/muffin-grey.svg';
+const MAX_PHOTO_FILES = 8;
 const PhotoPreviewSize = {
   WIDTH: 70,
   HEIGHT: 70,
@@ -13,7 +14,7 @@ const housePhotoPreview = document.querySelector('.ad-form__photo');
 const onAvatarFileChange = (evt) => {
   const file = evt.target.files[0];
   const fileName = file.name.toLowerCase();
-  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+  const matches = TYPES_OF_FILES.some((it) => fileName.endsWith(it));
   if (matches) {
     const reader = new FileReader();
     reader.addEventListener('load', () => {
@@ -32,19 +33,19 @@ export { clearAvatar };
 
 // Очистить превью фотографий
 const clearPhotos = () => {
-  housePhotoPreview.innerHTML = '';
+  housePhotoPreview.textContent = '';
 }
 export { clearPhotos };
 
 // Установить превью при выборе фотографии
 const onPhotosFilesChange = (evt) => {
   const files = evt.target.files;
-  if (files.length > 8) {
+  if (files.length > MAX_PHOTO_FILES) {
     alert('Ошибка, можно выбрать не более 8 файлов');
     return false;
   }
   for (let i = 0; i < files.length; i++) {
-    let matches = FILE_TYPES.some((it) => files[i].name.toLowerCase().endsWith(it));
+    let matches = TYPES_OF_FILES.some((it) => files[i].name.toLowerCase().endsWith(it));
     if (!matches) {
       alert('Ошибка! Неверный формат файлов!');
       return false;
@@ -59,7 +60,7 @@ const onPhotosFilesChange = (evt) => {
       imageElement.width = PhotoPreviewSize.WIDTH;
       imageElement.height = PhotoPreviewSize.HEIGHT;
       imageElement.src = reader.result;
-      imageElement.alt = 'Фотография жилья ' + i + 1;
+      imageElement.alt = 'Фотография жилья ' + (i + 1);
     });
     imagesFragment.appendChild(imageElement);
   }

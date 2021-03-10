@@ -6,6 +6,16 @@ import { resetFilterForm } from './filter-form.js';
 
 const MAX_ADVERTS = 10;
 
+const SizeMainIcon = {
+  WIDTH: 52,
+  HEIGHT: 52,
+}
+
+const SizeExtraIcon = {
+  WIDTH: 52,
+  HEIGHT: 52,
+}
+
 const CoordTokyo = {
   X: 35.68071,
   Y: 139.76855,
@@ -22,14 +32,14 @@ const extraMarkersLayer = L.layerGroup();
 
 const mainPinIcon = L.icon({
   iconUrl: 'img/main-pin.svg',
-  iconSize: [52, 52],
-  iconAnchor: [26, 52],
+  iconSize: [SizeMainIcon.WIDTH, SizeMainIcon.HEIGHT],
+  iconAnchor: [SizeMainIcon.WIDTH/2, SizeMainIcon.HEIGHT],
 });
 
 const extraPinIcon = L.icon({
   iconUrl: 'img/pin.svg',
-  iconSize: [52, 52],
-  iconAnchor: [26, 52],
+  iconSize: [SizeExtraIcon.WIDTH, SizeExtraIcon.HEIGHT],
+  iconAnchor: [SizeExtraIcon.WIDTH/2, SizeExtraIcon.HEIGHT],
 });
 
 const mainPinMarker = L.marker(
